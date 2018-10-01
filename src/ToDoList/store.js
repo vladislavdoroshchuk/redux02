@@ -1,7 +1,8 @@
 import { combineReducers } from 'redux';
 // import { createSelector } from 'reselect';
+import { combineSelectors } from 'combine-selectors-redux'
 
-import { getFilterFunc, filterList, get } from './helpers';
+import { getFilterFunc, getIsDeleted, filterList, get } from './helpers';
 import {
   action,
   createReducer,
@@ -16,11 +17,13 @@ const _toggleTodo = action('TODO::TOGGLE');
 export const toggleTodo = id => _toggleTodo({ id });
 export const saveTodo = action('TODO::SAVE');
 export const setFilter = action('TODO::SET-FILTER');
+export const toggleIsDeleted = action('TODO::TOGGLE-IS-DELETED');
 
 const initialTodoState = {
   id: 0,
   name: '',
-  completed: false
+  completed: false,
+  is_deleted: false
 };
 
 const todo = createReducer(initialTodoState, {
@@ -42,14 +45,18 @@ const ids = createReducer([], {
 });
 
 const maxId = createReducer([], {
-  [saveTodo.type]: (state, { payload} ) => payload.id + 1
+  [saveTodo.type]: (state, { payload} ) => +payload.id
 });
 
 const filter = createReducer('all', {
   [setFilter.type]: (_, { payload }) => payload
 });
 
-const todos = combineReducers({ byId, ids, maxId, filter });
+const isDeleted = createReducer(false, {
+  [toggleIsDeleted.type]: (_, { payload }) => payload
+});
+
+const todos = combineReducers({ byId, ids, maxId, filter, isDeleted});
 
 export default todos;
 
@@ -73,10 +80,27 @@ export const getFilterValue = createSelector(
   domain, get('filter')
 );
 
+export const getFilterIsDeleted = createSelector(
+  domain, get('isDeleted')
+);
+
 export const getFilter = createSelector(
   getFilterValue, getFilterFunc
 );
 
+export const getIsDeletedFilter = createSelector(
+  getFilterIsDeleted, getIsDeleted, filterList
+);
+
+/*export const selectors = combineSelectors({
+ getFilter, getIsDeletedFilter
+ });*/
+
 export const getVisibleTodos = createSelector(
   getTodos, getFilter, filterList
 );
+
+export const selectors = combineSelectors({
+  filter: getVisibleTodos,
+  isDeleted: getIsDeletedFilter
+});

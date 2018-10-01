@@ -11,13 +11,15 @@ initTodos(store);
 
 const App = () => (
   <div className="container">
-    <div className="row">
-      <h1>Todo List</h1>
+    <div className="col-sm-8">
+      <div className="row">
+        <h1>Todo List</h1>
+      </div>
+      <hr/>
+      <ToDoList />
+      <hr/>
+      <AddTodo />
     </div>
-    <hr/>
-    <ToDoList />
-    <hr/>
-    <AddTodo />
   </div>
 );
 

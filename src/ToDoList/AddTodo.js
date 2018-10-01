@@ -8,21 +8,23 @@ import { getVisibleTodos as getTodos, saveTodo} from './store';
 const AddTodo = ({ onClick }) => (
   <div className="container">
     <div className="row">
-      <div className="col-sm-d">
+      <div className="col-sm-10">
         <input className="form-control" id="new-todo" ref={node => {
           this.input = node;
         }} />
       </div>
-      <div className="col-md-4">
-        <button type="submit" className="btn btn-primary" onClick={onClick}>Add</button>
+      <div className="col-md-2">
+        <button type="submit" className="btn btn-primary container" onClick={onClick}>Add</button>
       </div>
     </div>
   </div>
 );
 
 const newTodo = (name) => {
+  this.input.value = '';
+
   return {
-    id:6,
+    id: store.getState().my_todos.todos.maxId + 1,
     name: name,
     completed: store.getState().my_todos.todos.filter !== 'not-completed'
   }

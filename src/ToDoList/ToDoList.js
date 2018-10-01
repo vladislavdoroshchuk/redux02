@@ -11,7 +11,7 @@ import {
 const ToDoList = ({ todos, onTodoClick, filter, onFilterChange }) => (
   <div className="container">
     <div className="row">
-      <div className="col-sm-4">
+      <div className="col-sm-12">
         <select className="form-control" value={filter} onChange={onFilterChange}>
           <option value="all">all</option>
           <option value="completed">completed</option>
