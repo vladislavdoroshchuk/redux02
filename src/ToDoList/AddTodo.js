@@ -1,8 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-
 import { store } from '../store'
-
 import { getVisibleTodos as getTodos, saveTodo} from './store';
 
 const AddTodo = ({ onClick }) => (
@@ -26,7 +24,7 @@ const newTodo = (name) => {
   return {
     id: store.getState().my_todos.todos.maxId + 1,
     name: name,
-    completed: store.getState().my_todos.todos.filter !== 'not-completed'
+    completed: store.getState().my_todos.todos.filter === 'completed'
   }
 };
 

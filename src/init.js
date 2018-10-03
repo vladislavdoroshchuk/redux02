@@ -5,7 +5,7 @@ import todos from './todos';
 let id = 0;
 const addAttributes = ( todo ) => {
   todo.id = id++;
-  todo.is_deleted = Boolean(Math.round(Math.random()));
+  todo.is_deleted = false;
   return todo;
 };
 

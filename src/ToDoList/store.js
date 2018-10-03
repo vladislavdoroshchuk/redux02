@@ -1,8 +1,8 @@
 import { combineReducers } from 'redux';
-// import { createSelector } from 'reselect';
-import { combineSelectors } from 'combine-selectors-redux'
 
-import { getFilterFunc, getIsDeleted, filterList, get } from './helpers';
+// import { createSelector } from 'reselect';
+
+import { getFilterFunc, filterList, get} from './helpers';
 import {
   action,
   createReducer,
@@ -17,7 +17,8 @@ const _toggleTodo = action('TODO::TOGGLE');
 export const toggleTodo = id => _toggleTodo({ id });
 export const saveTodo = action('TODO::SAVE');
 export const setFilter = action('TODO::SET-FILTER');
-export const toggleIsDeleted = action('TODO::TOGGLE-IS-DELETED');
+export const _deleteTodoAction = action('TODO::DELETE-TODO');
+export const deleteTodoAction = id => _deleteTodoAction({ id });
 
 const initialTodoState = {
   id: 0,
@@ -30,13 +31,17 @@ const todo = createReducer(initialTodoState, {
   [_toggleTodo.type]: state => ({
     ...state, completed: !state.completed
   }),
-  [saveTodo.type]: mergePayload
+  [saveTodo.type]: mergePayload,
+  [_deleteTodoAction.type]: state => ({
+    ...state, is_deleted: !state.is_deleted
+  })
 });
 
 const todoLookup = lookupReducer(todo);
 
 const byId = createReducer({}, {
   [_toggleTodo.type]: todoLookup,
+  [_deleteTodoAction.type]: todoLookup,
   [saveTodo.type]: todoLookup
 });
 
@@ -52,16 +57,19 @@ const filter = createReducer('all', {
   [setFilter.type]: (_, { payload }) => payload
 });
 
-const isDeleted = createReducer(false, {
-  [toggleIsDeleted.type]: (_, { payload }) => payload
+const deleteTodo = createReducer(false, {
+  [_deleteTodoAction.type]: state => ({
+    ...state, is_deleted: !state.is_deleted
+  })
 });
 
-const todos = combineReducers({ byId, ids, maxId, filter, isDeleted});
+const todos = combineReducers({ byId, ids, maxId, filter, deleteTodo});
 
 export default todos;
 
 // ------- SELECTORS --------
 const createSelector = (...selectors) => {
+
   const selector = selectors.pop();
   return (...args) => selector(
     ...selectors.map(s => s(...args))
@@ -80,27 +88,10 @@ export const getFilterValue = createSelector(
   domain, get('filter')
 );
 
-export const getFilterIsDeleted = createSelector(
-  domain, get('isDeleted')
-);
-
 export const getFilter = createSelector(
   getFilterValue, getFilterFunc
 );
 
-export const getIsDeletedFilter = createSelector(
-  getFilterIsDeleted, getIsDeleted, filterList
-);
-
-/*export const selectors = combineSelectors({
- getFilter, getIsDeletedFilter
- });*/
-
 export const getVisibleTodos = createSelector(
   getTodos, getFilter, filterList
 );
-
-export const selectors = combineSelectors({
-  filter: getVisibleTodos,
-  isDeleted: getIsDeletedFilter
-});
